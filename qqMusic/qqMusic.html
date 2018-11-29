@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>QQ音乐</title>
+    <link rel="stylesheet" type="text/css" href="./public/reset.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/css/swiper.css">
+    <link rel="shortcut icon" href="https://y.qq.com/favicon.ico?max_age=2592000">
+    <style>
+        .nav li{
+            float: left;
+            padding: 0 0.4rem;
+        }
+        li{
+            float: left;
+        }
+        .nav{
+            display: flex;
+            justify-content: space-around;
+            height: 0.4rem;
+            line-height: 0.4rem;
+        }
+        .current{
+            box-sizing: border-box;
+            border-bottom: 2px solid #31c27c;
+        }
+        .banner{
+            overflow: hidden;
+        }
+        img{
+            width: 1.73rem;
+            height: 1.73rem;
+        }
+        p{
+            width: 1.73rem;
+            height: 0.2rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow:ellipsis;
+        }
+        .banner img{
+            width: 3.75rem;
+            height: 1.5rem;
+        }
+        #radioList{
+            width: 3.75rem;
+            overflow: hidden;
+        }
+        #radioList li{
+            margin-left: 0.09rem;
+        }
+        #songList li{
+            margin-left: 0.09rem;
+        }
+        #songList{
+            width: 3.75rem;
+            overflow: hidden;
+        }
+        #hotList li{
+            width: 3.55rem;
+            margin: 0.1rem;
+            background: #ffffff;
+        }
+        #hotList{
+            background: #F4F4F4;
+            /* padding: 0.1rem; */
+            overflow: hidden;
+        }
+        #hotList li img{
+            float: left;
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.1rem;
+        }
+        #hotList .songlist li{
+            width: 2.45rem;
+            float: left;
+            margin: 0;
+        }
+        .search_bar{
+            background: #f4f4f4;
+            padding: 10px;
+            display: -webkit-box;
+            -webkit-box-orient: horizontal;
+            -webkit-box-align: center;
+        }
+        .search_input {
+            height: 20px;
+            line-height: 20px;
+            width: 100%;
+            color: rgba(0,0,0,.3);
+            border: none;
+            -webkit-appearance: none;
+            font-size: 14px;
+        }
+        .mod_search_bar .icon_search {
+            position: absolute;
+            top: 9px;
+            left: 10px;
+            width: 18px;
+            height: 18px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR…f/QqibVQZYm7drpg5C7TmzuZnSI6JZ2yWoAnKo61UY/5f3Dy7dC4CdAEhQAAAAAElFTkSuQmCC);
+            background-repeat: no-repeat;
+            background-size: cover;
+            text-indent: -999px;
+        }
+    </style>
+    <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth/100*26.67+"px"
+    </script>
+</head>
+<body>
+    <!-- https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&_=1540972374800 -->
+    <!-- https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&_=1540972706164 -->
+    <!-- https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&_=1540972720354 -->
+    <div id="my">
+    
+        <header>
+            <ul class="nav">
+                <li a href="#" :class = "{'current' : curTab ==='recommend'}" @click="curTab = 'recommend' , tabmanu(qqAjax.recommend)">推荐</li>
+                <li a href="#" :class = "{'current' : curTab ==='hotList'}" @click="curTab = 'hotList' , tabmanu(qqAjax.hotList)">排行榜</li>
+                <li a href="#" :class = "{'current' : curTab ==='search'}" @click="curTab = 'search' , tabmanu(qqAjax.search)">搜索</li>
+            </ul>
+        </header>
+        <!-- //=============== 推荐=============== -->
+        <article v-if="curTab == 'recommend'">
+            <!-- //=============== 轮播图=============== -->
+            <div class="banner">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper" id="slider">
+                        <div class="swiper-slide" v-for="(item,index) in recommend[0]" :key="index">
+                            <img :src='item.picUrl' />
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <!-- //=============== radioList=============== -->
+            <div class="radioList">
+                <h2>电台</h2>
+                <ul id="radioList">
+                    <li v-for="(item,index) in recommend[1]" :key="index">
+                        <a href="#">
+                            <img :src="item.picUrl">
+                            <h3>{{item.Ftitle}}</h3>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- //=============== 热门歌单=============== -->
+            <div class="songList">
+                <h2>热门歌单</h2>
+                <ul id="songList">
+                    <li v-for="(item,index) in recommend[2]" :key="index">
+                        <a href="#">
+                            <img :src="item.picUrl">
+                            <p>{{item.songListDesc}}</p>
+                            <p>{{item.songListAuthor}}</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </article>
+        <!-- //=============== 排行榜=============== -->
+        <article v-if="curTab == 'hotList'">
+            <!-- 这是排行榜页面 -->
+            <ul id="hotList">
+                <li v-for="(item,index) in hotList" :key="index">
+                    <a href="#">
+                        <img :src="item.picUrl">
+                        <h3>{{item.topTitle}}</h3>
+                        <ul class="songlist">
+                            <li v-for="(song,ind) in item.songList" :key="ind">
+                                {{song.songname}}-{{song.songername}}
+                            </li>
+                        </ul>
+                    </a>
+                </li>
+            </ul>
+        </article>
+
+        <!-- //=============== 搜索=============== -->
+        <article v-if="curTab == 'search'">
+            <div class="search_bar">
+                <form id="search_form" method="get" action="#">
+                    <input id="search_input" class="search_input" type="search" autocomplete="off" style="-webkit-appearance: textfield;"
+                        autocorrect="off" placeholder="搜索歌曲、歌单、专辑">
+                    <span class="icon icon_search">搜索</span>
+                    <span id="del_btn" class="icon icon_delete" style="display: none;">删除</span>
+                </form>
+            </div>
+        </article>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/js/swiper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+
+<script>
+    const apiproxy = 'https://bird.ioliu.cn/v2/?url=';
+    
+
+
+    
+
+
+    var vm = new Vue({
+        el: '#my',
+        data: {
+            curTab: 'recommend',
+            // qqAjax:{
+            //     recommend : '/cfj/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5',
+            //     hotList : '/cfj/v8/fcg-bin/fcg_myqq_toplist.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5',
+            //     search : '/cfj/splcloud/fcgi-bin/gethotkey.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5'
+            // },
+            qqAjax: {
+                recommend: 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5',
+                hotList: 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5',
+                search: 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5'
+            },
+            recommend:[],
+            hotList:[],
+            search:[]
+        },
+        methods:{
+            tabmanu(dat){
+                // axios.get(apiproxy+dat).then(result =>{console.log(result)});
+                // curTab = dat;
+                axios.get(apiproxy + dat).then(result => {
+                        console.log(result);
+
+                        // var htmlStr = '';
+                        // var radioListStr = '';
+                        // var songListStr = '';
+                        if (this.curTab ==='recommend') {
+                            var slider = result.data.data.slider;
+                            var radioList = result.data.data.radioList;
+                            var songList = result.data.data.songList;
+                            var recommendArr = [];
+                            recommendArr.push(slider);
+                            recommendArr.push(radioList);
+                            recommendArr.push(songList);
+                            this.recommend = recommendArr;
+                            console.log(this.recommend);
+                            const mySwiper = new Swiper('.swiper-container', {
+                                autoplay: 500,
+                                // pagination :''
+                                pagination: '.swiper-pagination',
+                                loop: true,
+                                // freeMode: true,
+                                observer: true,
+                                // grabCursor: true,
+                                autoplayDisableOnInteraction: false,
+                                // initialSlide: 0,
+                              
+                                
+                            });
+                            
+                            
+                        }else if (this.curTab === 'hotList') {
+                            var topList = result.data.data.topList;
+                            this.hotList = topList;
+                            console.log(this.hotList);
+                        }else if (this.curTab === 'search') {
+                            var hotkey = result.data.data.hotkey;
+                            this.search = hotkey;
+                            console.log(this.search);
+                        }
+                        
+                        // document.getElementById("radioList").innerHTML = radioListStr;
+
+                        // for (var k = 0; k < songList.length; k++) {
+                        //     songListStr += `<li>
+                        //                 <a href="#">
+                        //                     <img src="${songList[k].picUrl}">
+                        //                     <p>${songList[k].songListDesc}</p>
+                        //                     <p>${songList[k].songListAuthor}</p>
+                        //                 </a>
+                        //             </li>`
+                        // }
+                        // document.getElementById("songList").innerHTML = songListStr;
+                    }).catch(err => {console.log(err)});
+            }
+
+
+        },
+        mounted: function () {
+            // var dd = this.qqAjax.recommend;
+            // console.log(dd);
+            // var cc = '/cfj/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5';
+           this.tabmanu(this.qqAjax.recommend);
+        //    const mySwiper = new Swiper('.swiper-container', {
+        //         // autoplay: 500,
+        //         // pagination :''
+        //         pagination:'.swiper-pagination',
+        //         // freeMode: true,
+        //         observer: true,
+        //         // grabCursor: true,
+        //         autoplayDisableOnInteraction: false,
+        //         // loop: true,
+        //         runCallbacksOnInit: true,
+        //         on:{
+        //             // mySwiper.updateContainerSize();
+        //         },
+        //         onAutoplayStop: function (swiper) {
+        //            alert('事件触发了;');
+        //        }
+        //     });
+        // https://m.maizuo.com/v4/api/cinema?__t=1541416659506
+            axios.get("/v4/api/cinema").then(result => {
+                console.log(result);
+            })
+        }
+    })
+</script>
+
+
+</html>

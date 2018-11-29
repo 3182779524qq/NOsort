@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        span{
+            margin: 10px;
+            display: inline-block;
+            padding: 10px;
+            /* border: 1px solid #f0f; */
+            color: red;
+        }
+        .on{
+            color: #f0f;
+            border: red 1px solid;
+        }
+    </style>
+</head>
+<body>
+    <div id="my">
+        <!-- <span :class = "{'on' : curTab ==='home'}" @click="curTab = 'home'">首页</span>
+        <span :class = "{'on' : curTab ==='list'}" @click="curTab = 'list'">列表</span> -->
+
+
+        <!-- //=============== 修改为for循环=============== -->
+        <span v-for = "(item,index) in tabs"
+        :key="index"
+        :class = "{'on':curTab===item.id}"
+        @click="curTab = item.id">
+        {{item.name}}
+        </span>
+
+        <div v-if="curTab == 'home'">这是首页内容</div>
+        <div v-else-if="curTab == 'list'">这是列表内容啊啊啊</div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+<script>
+    var vm = new Vue({
+        el:'#my',
+        data:{
+            curTab:'home',
+            tabs: [
+                {
+                    id: 'home',
+                    name: '首页'
+                },
+                {
+                    id: 'list',
+                    name: '列表'
+                }
+            ]
+        }
+    })
+</script>
+</html>
